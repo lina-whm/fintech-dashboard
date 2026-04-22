@@ -1,0 +1,26 @@
+{
+  "files.autoSave": "afterDelay",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "editor.minimap.enabled": false,
+  "explorer.confirmDelete": false,
+  "kilo-code.allowedCommands": [
+    "git log",
+    "git diff",
+    "git show"
+  ],
+  "kilo-code.deniedCommands": [],
+  "vscode-pets.theme": "autumn",
+  "workbench.iconTheme": "file-icons",
+  "workbench.colorTheme": "GitHub Dark High Contrast",
+  "vscode-pets.throwBallWithMouse": true,
+  "vscode-pets.petSize": "medium",
+  "vscode-pets.petColor": "white",
+  "css.validate": false,
+  "tailwindCSS.validate": true,
+  "editor.quickSuggestions": {
+    "strings": true
+  }
+}
