@@ -10,6 +10,7 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import { ReceiptUploader } from "./receipt-uploader";
 
 export function AddTransactionForm() {
   const mutation = useAddTransactionMutation();
@@ -18,14 +19,15 @@ export function AddTransactionForm() {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
       title: "",
       amount: 0,
-      category: "Food",
-      type: "expense",
+      category: "Еда",
+      type: "Расход",
       date: getTodayISO(),
     },
   });
@@ -35,8 +37,8 @@ export function AddTransactionForm() {
     reset({
       title: "",
       amount: 0,
-      category: "Food",
-      type: "expense",
+      category: "Еда",
+      type: "Расход",
       date: getTodayISO(),
     });
   });
@@ -47,6 +49,15 @@ export function AddTransactionForm() {
         <CardTitle className="text-base">Добавить транзакцию</CardTitle>
       </CardHeader>
       <CardContent>
+        <div className="mb-4">
+          <ReceiptUploader onDataFilled={(data) => {
+            setValue("title", data.title);
+            setValue("amount", data.amount);
+            setValue("date", data.date);
+            setValue("category", data.category as any);
+            setValue("type", "Расход");
+          }} />
+        </div>
         <form onSubmit={onSubmit} className="grid gap-4" data-testid="transaction-form">
           <div className="grid gap-2">
             <label htmlFor="title">Название</label>
@@ -55,7 +66,7 @@ export function AddTransactionForm() {
           </div>
 
           <div className="grid gap-2">
-            <label htmlFor="amount">Сумма</label>
+            <label htmlFor="amount">Сумма (₽)</label>
             <Input id="amount" type="number" step="any" {...register("amount")} />
             {errors.amount && <p className="text-sm text-destructive">{errors.amount.message}</p>}
           </div>
@@ -67,14 +78,10 @@ export function AddTransactionForm() {
               name="category"
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {transactionCategories.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -89,14 +96,10 @@ export function AddTransactionForm() {
               name="type"
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {transactionTypes.map((t) => (
-                      <SelectItem key={t} value={t}>
-                        {t === "income" ? "Доход" : "Расход"}
-                      </SelectItem>
+                      <SelectItem key={t} value={t}>{t}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

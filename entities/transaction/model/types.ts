@@ -1,7 +1,16 @@
 import { z } from "zod";
 
-export const transactionCategories = ["Food", "Transport", "Shopping", "Health", "Entertainment", "Salary", "Other"] as const;
-export const transactionTypes = ["income", "expense"] as const;
+export const transactionCategories = [
+  "Еда",
+  "Транспорт",
+  "Покупки",
+  "Здоровье",
+  "Развлечения",
+  "Зарплата",
+  "Другое",
+] as const;
+
+export const transactionTypes = ["Доход", "Расход"] as const;
 
 export type TransactionCategory = (typeof transactionCategories)[number];
 export type TransactionType = (typeof transactionTypes)[number];

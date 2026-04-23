@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FinTech Dashboard
 
-## Getting Started
+> Современное веб-приложение для управления личными финансами. Проект демонстрирует навыки работы с Next.js, TypeScript, современными UI-библиотеками, оптимистичными обновлениями, аналитикой и тестированием.
 
-First, run the development server:
+** Живая демонстрация:** [Скоро будет ссылка на Vercel]  
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Ключевые возможности
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Функция | Описание |
+|---------|----------|
+| **Баланс и сводка** | Отображение текущего баланса, доходов и расходов с автоматическим пересчётом |
+| **Таблица транзакций** | Список последних операций с пагинацией, возможностью редактирования и удаления |
+| **Optimistic UI** | Мгновенное обновление интерфейса при добавлении/изменении/удалении транзакций (React Query) |
+| **Аналитика** | Круговая диаграмма расходов по категориям и линейный график динамики баланса |
+| **Бюджетирование** | Установка лимитов на категории расходов с визуальным прогресс-баром |
+| **Фильтрация** | Поиск по названию/категории, выбор диапазона дат, фильтр по типу (доход/расход) |
+| **Экспорт в CSV** | Выгрузка всех транзакций в формате CSV одним кликом |
+| **Тёмная тема** | Поддержка светлой и тёмной темы с системным переключением |
+| **Адаптивность** | Корректное отображение на десктопах, планшетах и мобильных устройствах |
+| **Производительность** | Динамический импорт графиков, скелетоны загрузки, кэширование запросов |
+| **Тестирование** | Юнит-тесты (Vitest) и e2e-тест добавления транзакции (Playwright) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Технологический стек
 
-To learn more about Next.js, take a look at the following resources:
+| Категория | Технологии |
+|-----------|-------------|
+| **Фреймворк** | Next.js 15 (App Router, Turbopack) |
+| **Язык** | TypeScript |
+| **Стили** | Tailwind CSS, shadcn/ui, class-variance-authority |
+| **Управление состоянием** | TanStack Query (серверное), Zustand (UI/фильтры) |
+| **Формы и валидация** | React Hook Form, Zod |
+| **Графики** | Recharts |
+| **Анимации** | Lucide React, react-loading-skeleton |
+| **Пагинация** | react-paginate |
+| **Тёмная тема** | next-themes |
+| **Тесты** | Vitest, Testing Library, Playwright |
+| **AI-ускорение** | Cursor, GitHub Copilot, v0 |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Архитектура проекта
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Проект организован по методологии **Feature-Sliced Design (FSD)**, что обеспечивает масштабируемость и чистоту кода:
+src/
+├── app/ # Маршрутизация Next.js, провайдеры, глобальные стили
+├── entities/ # Доменные сущности (транзакции, типы, репозиторий)
+├── features/ # Сценарии пользователя (добавление, фильтры, удаление, редактирование, бюджеты)
+├── widgets/ # Самодостаточные блоки интерфейса (карточки, графики, таблица, фильтры)
+├── shared/ # Переиспользуемые утилиты, API клиент, UI-компоненты (shadcn/ui)
+├── server/ # Симуляция бэкенда (in-memory store, API routes)
+└── data/ # JSON-файл с начальными данными транзакций
