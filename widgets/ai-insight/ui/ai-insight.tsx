@@ -39,15 +39,15 @@ export function AIInsight() {
   }, [transactions]);
 
   return (
-    <Card className="shadow-soft bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950 dark:to-yellow-950">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-2">
-          <Lightbulb className="h-4 w-4 text-amber-600" />
+    <Card className="shadow-soft bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 !gap-0 !py-0">
+      <CardHeader className="pb-1 px-3">
+        <CardTitle className="text-xs flex items-center gap-2 text-gray-900 dark:text-white">
+          <Lightbulb className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
           Совет AI
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm">
+      <CardContent className="px-3 pt-0">
+        <p className="text-sm text-gray-700 dark:text-gray-300">
           {isLoading ? "Анализирую данные..." : insight}
         </p>
       </CardContent>

@@ -44,11 +44,11 @@ export function AddTransactionForm() {
   });
 
   return (
-    <Card className="shadow-soft">
-      <CardHeader>
-        <CardTitle className="text-base">Добавить транзакцию</CardTitle>
+    <Card className="shadow-soft border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50 !gap-0 !py-0">
+      <CardHeader className="pb-1 px-3">
+        <CardTitle className="text-sm">Добавить транзакцию</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-3 pt-0">
         <div className="mb-4">
           <ReceiptUploader onDataFilled={(data) => {
             setValue("title", data.title);
@@ -60,25 +60,25 @@ export function AddTransactionForm() {
         </div>
         <form onSubmit={onSubmit} className="grid gap-4" data-testid="transaction-form">
           <div className="grid gap-2">
-            <label htmlFor="title">Название</label>
-            <Input id="title" {...register("title")} />
+            <label htmlFor="title" className="dark:text-gray-200">Название</label>
+            <Input id="title" {...register("title")} className="dark:bg-gray-900 dark:border-gray-700 dark:text-white" />
             {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
           </div>
 
           <div className="grid gap-2">
-            <label htmlFor="amount">Сумма (₽)</label>
-            <Input id="amount" type="number" step="any" {...register("amount")} />
+            <label htmlFor="amount" className="dark:text-gray-200">Сумма (₽)</label>
+            <Input id="amount" type="number" step="any" {...register("amount")} className="dark:bg-gray-900 dark:border-gray-700 dark:text-white" />
             {errors.amount && <p className="text-sm text-destructive">{errors.amount.message}</p>}
           </div>
 
           <div className="grid gap-2">
-            <label>Категория</label>
+            <label className="dark:text-gray-200">Категория</label>
             <Controller
               control={control}
               name="category"
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="dark:bg-gray-900 dark:border-gray-700 dark:text-white"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {transactionCategories.map((c) => (
                       <SelectItem key={c} value={c}>{c}</SelectItem>
@@ -90,13 +90,13 @@ export function AddTransactionForm() {
           </div>
 
           <div className="grid gap-2">
-            <label>Тип</label>
+            <label className="dark:text-gray-200">Тип</label>
             <Controller
               control={control}
               name="type"
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="dark:bg-gray-900 dark:border-gray-700 dark:text-white"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {transactionTypes.map((t) => (
                       <SelectItem key={t} value={t}>{t}</SelectItem>
@@ -108,8 +108,8 @@ export function AddTransactionForm() {
           </div>
 
           <div className="grid gap-2">
-            <label htmlFor="date">Дата</label>
-            <Input id="date" type="date" {...register("date")} />
+            <label htmlFor="date" className="dark:text-gray-200">Дата</label>
+            <Input id="date" type="date" {...register("date")} className="dark:bg-gray-900 dark:border-gray-700 dark:text-white" />
             {errors.date && <p className="text-sm text-destructive">{errors.date.message}</p>}
           </div>
 

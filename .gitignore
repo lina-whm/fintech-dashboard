@@ -40,3 +40,6 @@ next-env.d.ts
 
 # Ollama (локальные модели — не нужно в репозитории)
 ollama_models/
+
+# Qwen Code AI config
+.qwen/

@@ -24,6 +24,12 @@ import { Card, CardContent } from "@/shared/ui/card";
 import { Download } from "lucide-react";
 import { AIChat } from "@/widgets/ai-chat/ui/ai-chat";
 import { AIInsight } from "@/widgets/ai-insight/ui/ai-insight";
+import { KpiCards } from "@/widgets/kpi-cards/ui/kpi-cards";
+import { CashFlowMonitor } from "@/features/cash-flow-monitor/ui/cash-flow-monitor";
+import { SavingsRate } from "@/features/savings-rate/ui/savings-rate";
+import { GoalTracker } from "@/features/goal-tracker/ui/goal-tracker";
+import { DebtSafetyNet } from "@/features/debt-safety/ui/debt-safety-net";
+import { GroupedExpenses } from "@/widgets/grouped-expenses/ui/grouped-expenses";
 
 const ExpenseChart = dynamic(() => import("@/widgets/expense-chart/ui/expense-chart").then(m => m.ExpenseChart), {
   ssr: false,
@@ -38,22 +44,51 @@ export function Dashboard() {
   const summary = calculateSummary(sorted);
   const chartData = buildExpenseChartData(filtered);
   
+  // Для месячных метрик (используем данные за текущий месяц)
+  const currentMonth = new Date().toISOString().slice(0, 7);
+  const monthlyTransactions = filtered.filter(t => t.date.startsWith(currentMonth));
+  const monthlyIncome = monthlyTransactions.filter(t => t.type === "Доход").reduce((s, t) => s + t.amount, 0);
+  const monthlyExpenses = monthlyTransactions.filter(t => t.type === "Расход").reduce((s, t) => s + t.amount, 0);
+  const monthlyBalance = monthlyIncome - monthlyExpenses;
+
   const expensesByCategory = filtered
-    .filter(t => t.type === "Расход")   // ← исправлено: было "expense"
+    .filter(t => t.type === "Расход")
     .reduce((acc, t) => {
       acc[t.category] = (acc[t.category] || 0) + t.amount;
       return acc;
     }, {} as Record<string, number>);
 
   const exportToCSV = () => {
-    const headers = ["ID", "Название", "Сумма", "Категория", "Тип", "Дата"];
-    const rows = filtered.map(t => [t.id, t.title, t.amount, t.category, t.type, t.date]);
-    const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
+    const headers = ["ID", "Название", "Сумма (₽)", "Категория", "Тип", "Дата"];
+    
+    const escapeCSVField = (field: string | number): string => {
+      const str = typeof field === "number" ? field.toFixed(2) : String(field);
+      if (/[;"\n]/.test(str)) {
+        return `"${str.replace(/"/g, `""`)}"`;
+      }
+      return str;
+    };
+
+    const rows = filtered.map(t => [
+      t.id,
+      t.title,
+      Number(t.amount).toFixed(2),
+      t.category,
+      t.type,
+      t.date
+    ]);
+    
+    const csvContent = "\uFEFF" + [
+      headers.map(escapeCSVField).join(";"),
+      ...rows.map(row => row.map(escapeCSVField).join(";"))
+    ].join("\n");
+
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
+    const dateStr = new Date().toISOString().slice(0, 10);
     link.href = url;
-    link.setAttribute("download", "transactions.csv");
+    link.setAttribute("download", `transactions_${dateStr}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -62,36 +97,60 @@ export function Dashboard() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <header className="mb-8 flex flex-col gap-6 rounded-3xl border bg-white dark:bg-slate-900 p-6 shadow-soft lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-4">
-            <Image src="/brand-mark.svg" alt="logo" width={48} height={48} priority />
-            <div>
-              <p className="text-sm text-muted-foreground">Личный финансовый кабинет</p>
-              <h1 className="text-2xl font-semibold">FinTech Dashboard</h1>
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+        <header className="mb-6 rounded-3xl border border-gray-200 bg-white p-4 shadow-soft dark:border-gray-700 dark:bg-gray-800 sm:mb-8 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <div className="flex items-center gap-3">
+              <Image src="/brand-mark.svg" alt="logo" width={40} height={40} priority className="h-10 w-10 flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground dark:text-gray-400 truncate">Личный финансовый кабинет</p>
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white sm:text-xl truncate">FinTech Dashboard</h1>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" onClick={exportToCSV}>
-              <Download className="mr-2 h-4 w-4" /> CSV
-            </Button>
-            <ThemeToggle />
+            <div className="flex items-center gap-2 shrink-0">
+              <Button variant="outline" onClick={exportToCSV} size="sm" className="h-9 text-xs whitespace-nowrap">
+                <Download className="mr-1.5 h-4 w-4" />
+                <span className="hidden sm:inline">CSV</span>
+              </Button>
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 
-        <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-          <div className="space-y-6">
-            <div className="grid gap-6 lg:grid-cols-2">
-              <BalanceCard summary={summary} />
-              <ExpenseChart data={chartData} />
+        {/* KPI */}
+        <div className="mb-6">
+          <KpiCards
+            transactions={filtered}
+            balance={summary.balance}
+            income={monthlyIncome}
+            expenses={monthlyExpenses}
+          />
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-[1fr_0.8fr]">
+          {/* Левая колонка */}
+          <div className="space-y-4 md:space-y-6">
+            {/* 1-я строка: Монитор | Баланс */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="w-full"><CashFlowMonitor /></div>
+              <div className="w-full"><BalanceCard summary={summary} /></div>
             </div>
-            <div className="grid gap-6 lg:grid-cols-2">
-              <BudgetCard expensesByCategory={expensesByCategory} />
-              <TopCategories data={chartData} />
+
+            {/* 2-я строка: Структура расходов + Динамика баланса (слева) | Расходы по категориям (справа) */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="flex flex-col gap-4">
+                <div className="w-full"><GroupedExpenses transactions={filtered} /></div>
+                <div className="w-full"><BalanceTrend transactions={filtered} /></div>
+              </div>
+              <div className="w-full"><ExpenseChart data={chartData} /></div>
             </div>
-            <BalanceTrend transactions={filtered} />
-            <AIInsight />
-            <FiltersBar />
+
+            {/* 3-я строка: Процент сбережения */}
+            <div className="w-full"><SavingsRate income={monthlyIncome} expenses={monthlyExpenses} /></div>
+
+            {/* Фильтры (полная ширина) */}
+            <div className="w-full"><FiltersBar /></div>
+            
             {isLoading ? (
               <TransactionTableSkeleton />
             ) : error ? (
@@ -99,12 +158,19 @@ export function Dashboard() {
                 <CardContent className="p-6 text-destructive">Ошибка загрузки</CardContent>
               </Card>
             ) : (
-              <TransactionTable transactions={sorted} />
+              <div className="w-full"><TransactionTable transactions={sorted} /></div>
             )}
           </div>
-          <div className="space-y-6">
-            <AddTransactionForm />
-            <AIChat />
+
+          {/* Правая колонка */}
+          <div className="space-y-4 md:space-y-6">
+            <div className="w-full"><AddTransactionForm /></div>
+            <div className="w-full"><GoalTracker /></div>
+            <div className="w-full"><DebtSafetyNet monthlyExpenses={monthlyExpenses} /></div>
+            <div className="w-full"><BudgetCard expensesByCategory={expensesByCategory} /></div>
+            <div className="w-full"><TopCategories data={chartData} /></div>
+            <div className="w-full"><AIInsight /></div>
+            <div className="w-full"><AIChat /></div>
           </div>
         </div>
       </div>

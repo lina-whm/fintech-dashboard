@@ -75,7 +75,7 @@ export function EditTransactionDialog({ open, onOpenChange, transaction }: EditT
             <Controller control={control} name="type" render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{transactionTypes.map(t => <SelectItem key={t} value={t}>{t === "income" ? "Доход" : "Расход"}</SelectItem>)}</SelectContent>
+                <SelectContent>{transactionTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
             )} />
           </div>

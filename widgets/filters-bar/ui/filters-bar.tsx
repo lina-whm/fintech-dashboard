@@ -12,49 +12,58 @@ export function FiltersBar() {
   const filters = useTransactionFiltersStore();
 
   return (
-    <Card className="shadow-soft">
-      <CardHeader>
-        <CardTitle className="text-base">Фильтры</CardTitle>
+    <Card className="shadow-soft border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50 !gap-0 !py-0">
+      <CardHeader className="pb-1 px-3">
+        <CardTitle className="text-sm">Фильтры</CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-4 lg:grid-cols-5">
-        <Input
-          placeholder="Поиск по названию или категории"
-          value={filters.search}
-          onChange={(e) => filters.setSearch(e.target.value)}
-        />
-        <Input
-          type="date"
-          value={filters.fromDate}
-          onChange={(e) => filters.setFromDate(e.target.value)}
-          placeholder="От"
-        />
-        <Input
-          type="date"
-          value={filters.toDate}
-          onChange={(e) => filters.setToDate(e.target.value)}
-          placeholder="До"
-        />
-        <Select value={filters.category} onValueChange={(v) => filters.setCategory(v as TransactionCategory | "все")}>
-          <SelectTrigger><SelectValue placeholder="Категория" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="все">Все категории</SelectItem>
-            {transactionCategories.map((c) => (
-              <SelectItem key={c} value={c}>{c}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={filters.type} onValueChange={(v) => filters.setType(v as TransactionType | "все")}>
-          <SelectTrigger><SelectValue placeholder="Тип" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="все">Все типы</SelectItem>
-            {transactionTypes.map((t) => (
-              <SelectItem key={t} value={t}>{t}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button variant="outline" onClick={filters.resetFilters} className="lg:col-span-5">
-          Сбросить фильтры
-        </Button>
+      <CardContent className="px-3 pt-0">
+        <div className="flex flex-wrap items-end gap-2">
+          <Input
+            placeholder="Поиск"
+            value={filters.search}
+            onChange={(e) => filters.setSearch(e.target.value)}
+            className="h-8 min-w-[140px] flex-1 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+          />
+          <Input
+            type="date"
+            value={filters.fromDate}
+            onChange={(e) => filters.setFromDate(e.target.value)}
+            placeholder="От"
+            className="h-8 w-[130px] dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+          />
+          <Input
+            type="date"
+            value={filters.toDate}
+            onChange={(e) => filters.setToDate(e.target.value)}
+            placeholder="До"
+            className="h-8 w-[130px] dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+          />
+          <Select value={filters.category} onValueChange={(v) => filters.setCategory(v as TransactionCategory | "все")}>
+            <SelectTrigger className="h-8 w-[130px] dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+              <SelectValue placeholder="Категория" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="все">Все категории</SelectItem>
+              {transactionCategories.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filters.type} onValueChange={(v) => filters.setType(v as TransactionType | "все")}>
+            <SelectTrigger className="h-8 w-[100px] dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+              <SelectValue placeholder="Тип" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="все">Все типы</SelectItem>
+              {transactionTypes.map((t) => (
+                <SelectItem key={t} value={t}>{t}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button variant="outline" onClick={filters.resetFilters} size="sm" className="h-8 whitespace-nowrap">
+            Сбросить
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
