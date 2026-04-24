@@ -5,7 +5,7 @@ import type { DashboardSummary } from "@/entities/transaction/api/transaction.se
 
 export function BalanceCard({ summary }: { summary: DashboardSummary }) {
   return (
-    <Card className="shadow-soft border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50 !gap-0 !py-0">
+    <Card className="shadow-soft border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50 !gap-0 !py-0 h-full">
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Баланс</CardTitle>
       </CardHeader>

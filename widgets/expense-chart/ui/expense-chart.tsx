@@ -48,6 +48,8 @@ export function ExpenseChart({ data }: { data: ExpenseChartItem[] }) {
                   borderColor: isDark ? "#334155" : "#e2e8f0",
                   color: isDark ? "#f1f5f9" : "#0f172a"
                 }}
+                labelStyle={{ color: isDark ? "#f1f5f9" : "#0f172a", fontWeight: 600 }}
+                itemStyle={{ color: isDark ? "#f1f5f9" : "#0f172a" }}
               />
               <Legend
                 wrapperStyle={{
