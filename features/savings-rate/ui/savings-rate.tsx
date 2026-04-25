@@ -28,7 +28,7 @@ export function SavingsRate({ income, expenses }: SavingsRateProps) {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Процент сбережения</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-1 px-3 pt-0">
+      <CardContent className="space-y-1 px-3 pt-1">
         <div className="text-xl font-bold dark:text-gray-200 sm:text-2xl">
           <span className={rateColor}>{savingsRate.toFixed(1)}%</span>
           <span className="text-xs text-muted-foreground ml-2">от дохода</span>

@@ -19,7 +19,7 @@ export function ExpenseChart({ data }: { data: ExpenseChartItem[] }) {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Расходы по категориям</CardTitle>
       </CardHeader>
-      <CardContent className="h-[260px] sm:h-[320px] w-full px-3 pt-0">
+      <CardContent className="h-[260px] sm:h-[320px] w-full px-3 pt-1">
         {data.length === 0 ? (
           <div className="flex h-full items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground dark:text-gray-400 dark:border-gray-700">
             Нет расходов за выбранный период

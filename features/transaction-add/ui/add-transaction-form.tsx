@@ -48,7 +48,7 @@ export function AddTransactionForm() {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Добавить транзакцию</CardTitle>
       </CardHeader>
-      <CardContent className="px-3 pt-0">
+      <CardContent className="px-3 pt-1">
         <div className="mb-4">
           <ReceiptUploader onDataFilled={(data) => {
             setValue("title", data.title);
@@ -109,7 +109,7 @@ export function AddTransactionForm() {
 
           <div className="grid gap-2">
             <label htmlFor="date" className="dark:text-gray-200">Дата</label>
-            <Input id="date" type="date" {...register("date")} className="dark:bg-gray-900 dark:border-gray-700 dark:text-white" />
+            <Input id="date" type="date" {...register("date")} className="w-full min-w-0 dark:bg-gray-900 dark:border-gray-700 dark:text-white [color-scheme:light]" />
             {errors.date && <p className="text-sm text-destructive">{errors.date.message}</p>}
           </div>
 

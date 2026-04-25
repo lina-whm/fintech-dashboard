@@ -46,7 +46,7 @@ export function AIInsight() {
           Совет AI
         </CardTitle>
       </CardHeader>
-      <CardContent className="px-3 pt-0">
+      <CardContent className="px-3 pt-1">
         <p className="text-sm text-gray-700 dark:text-gray-300">
           {isLoading ? "Анализирую данные..." : insight}
         </p>

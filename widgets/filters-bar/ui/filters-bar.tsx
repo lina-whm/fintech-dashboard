@@ -16,7 +16,7 @@ export function FiltersBar() {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Фильтры</CardTitle>
       </CardHeader>
-      <CardContent className="px-3 pt-0">
+      <CardContent className="px-3 pt-1">
         <div className="flex flex-wrap items-end gap-2">
           <Input
             placeholder="Поиск"
@@ -24,20 +24,26 @@ export function FiltersBar() {
             onChange={(e) => filters.setSearch(e.target.value)}
             className="h-8 min-w-[140px] flex-1 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
           />
-          <Input
-            type="date"
-            value={filters.fromDate}
-            onChange={(e) => filters.setFromDate(e.target.value)}
-            placeholder="От"
-            className="h-8 w-[130px] dark:bg-gray-900 dark:border-gray-700 dark:text-white"
-          />
-          <Input
-            type="date"
-            value={filters.toDate}
-            onChange={(e) => filters.setToDate(e.target.value)}
-            placeholder="До"
-            className="h-8 w-[130px] dark:bg-gray-900 dark:border-gray-700 dark:text-white"
-          />
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] leading-none text-muted-foreground dark:text-gray-400">От</span>
+            <Input
+              type="date"
+              value={filters.fromDate}
+              onChange={(e) => filters.setFromDate(e.target.value)}
+              aria-label="Дата от"
+              className="h-8 w-[130px] dark:bg-gray-900 dark:border-gray-700 dark:text-white [color-scheme:light]"
+            />
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] leading-none text-muted-foreground dark:text-gray-400">До</span>
+            <Input
+              type="date"
+              value={filters.toDate}
+              onChange={(e) => filters.setToDate(e.target.value)}
+              aria-label="Дата до"
+              className="h-8 w-[130px] dark:bg-gray-900 dark:border-gray-700 dark:text-white [color-scheme:light]"
+            />
+          </div>
           <Select value={filters.category} onValueChange={(v) => filters.setCategory(v as TransactionCategory | "все")}>
             <SelectTrigger className="h-8 w-[130px] dark:bg-gray-900 dark:border-gray-700 dark:text-white">
               <SelectValue placeholder="Категория" />

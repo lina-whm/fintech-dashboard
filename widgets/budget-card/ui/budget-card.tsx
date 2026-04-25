@@ -31,7 +31,7 @@ export function BudgetCard({ expensesByCategory }: BudgetCardProps) {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Бюджеты по категориям</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2.5 px-3 pt-0">
+      <CardContent className="space-y-2.5 px-3 pt-1">
         {/* Горизонтальная панель с переносом */}
         <div className="flex flex-wrap items-end gap-2">
           <div className="flex-1 min-w-[120px]">

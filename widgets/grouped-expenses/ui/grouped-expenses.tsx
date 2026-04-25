@@ -55,7 +55,7 @@ export function GroupedExpenses({ transactions }: GroupedExpensesProps) {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm !leading-tight">Структура расходов</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-0.5 px-3 pt-0">
+      <CardContent className="space-y-0.5 px-3 pt-1">
         {Object.entries(grouped).map(([name, amount]) => (
           <div key={name} className="flex justify-between items-center border-b border-gray-200 pb-0.5 last:border-0 last:pb-0 dark:border-gray-700">
             <span className="text-xs">{name}</span>

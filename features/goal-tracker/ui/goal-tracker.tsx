@@ -38,7 +38,7 @@ export function GoalTracker() {
           Финансовая цель
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2 px-3 pt-0">
+      <CardContent className="space-y-2 px-3 pt-1">
         <div className="flex justify-between items-center dark:text-gray-200">
           <span className="text-sm text-muted-foreground dark:text-gray-400">Накоплено:</span>
           {editCurrent ? (

@@ -22,7 +22,7 @@ export function CashFlowMonitor({
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Монитор денежных потоков</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-1.5 px-3 pt-0">
+      <CardContent className="space-y-1.5 px-3 pt-1">
         <div className="flex items-center justify-between border-b border-gray-200 pb-1 last:border-0 dark:border-gray-700">
           <div className="flex items-center gap-2">
             <Wallet className="h-4 w-4 text-blue-500 dark:text-blue-400" />

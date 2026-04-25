@@ -12,7 +12,7 @@ export function TopCategories({ data }: { data: ExpenseChartItem[] }) {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Топ категории расходов</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-1 px-3 pt-0">
+      <CardContent className="space-y-1 px-3 pt-1">
         {top3.map(item => {
           const percent = total ? (item.value / total) * 100 : 0;
           return (

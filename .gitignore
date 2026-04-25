@@ -43,3 +43,4 @@ ollama_models/
 
 # Qwen Code AI config
 .qwen/
+.vercel

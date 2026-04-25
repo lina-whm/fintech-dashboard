@@ -9,7 +9,7 @@ export function BalanceCard({ summary }: { summary: DashboardSummary }) {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Баланс</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-1.5 px-3 pt-0">
+      <CardContent className="space-y-1.5 px-3 pt-1">
         <div><p className="text-2xl font-semibold sm:text-3xl" data-testid="balance-value">{formatCurrency(summary.balance)}</p><p className="text-xs text-muted-foreground dark:text-gray-400">Текущий остаток</p></div>
         <Separator />
         <div className="grid grid-cols-2 gap-2 text-sm">

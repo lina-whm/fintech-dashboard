@@ -39,7 +39,7 @@ export function BalanceTrend({ transactions }: BalanceTrendProps) {
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Динамика баланса</CardTitle>
       </CardHeader>
-      <CardContent className="h-[200px] px-3 pt-0">
+      <CardContent className="h-[200px] px-3 pt-1">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={unique}>
             <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />

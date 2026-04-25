@@ -39,7 +39,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
         <CardHeader className="pb-1 px-3">
           <CardTitle className="text-sm dark:text-gray-200">Последние транзакции</CardTitle>
         </CardHeader>
-        <CardContent className="px-3 pt-0">
+        <CardContent className="px-3 pt-1">
           {/* Десктоп: таблица */}
           <div className="hidden sm:block overflow-x-auto">
             <Table>

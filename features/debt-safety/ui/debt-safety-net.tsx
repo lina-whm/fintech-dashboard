@@ -44,7 +44,7 @@ export function DebtSafetyNet({ monthlyExpenses }: DebtSafetyNetProps) {
           Долги и подушка безопасности
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2 px-3 pt-0">
+      <CardContent className="space-y-2 px-3 pt-1">
         <div className="flex justify-between items-center dark:text-gray-200">
           <div className="flex items-center gap-2">
             <HandCoins className="h-4 w-4 text-rose-400 dark:text-rose-500" />

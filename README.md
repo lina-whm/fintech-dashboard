@@ -106,6 +106,9 @@ npm install
 
 ```env
 # Ollama (по умолчанию http://localhost:11434)
+# Для доступа с других устройств в локальной сети:
+#   Windows: set OLLAMA_HOST=0.0.0.0
+#   затем укажите IP вашего ПК: http://192.168.x.x:11434
 OLLAMA_API_URL=http://localhost:11434
 ```
 
