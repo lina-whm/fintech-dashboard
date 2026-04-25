@@ -9,6 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)]()
 [![Coverage](https://img.shields.io/badge/Coverage-85%25-brightgreen?style=flat-square)]()
+[![PWA Ready](https://img.shields.io/badge/PWA-ready-5A0FC8?style=flat-square&logo=pwa)]()
 
 ---
 
@@ -65,6 +66,7 @@
 - [x] **Экспорт CSV** — выгрузка всех транзакций с BOM (Excel-ready)
 - [x] **Тёмная тема** — next-themes, системное автоопределение
 - [x] **Адаптивная вёрстка** — десктоп, планшет, мобайл (Tailwind CSS)
+- [x] **PWA (Progressive Web App)** — установка на домашний экран, офлайн-доступ, service worker
 - [x] **KPI-панель** — 6 метрик: общий баланс, доходы/расходы за месяц, средний чек, макс. трата
 - [ ] Интеграция с банковскими API (планируется)
 - [ ] Мультивалютность (планируется)
@@ -150,6 +152,42 @@ npm run start     # запуск на http://localhost:3000
 ```bash
 npm run lint
 ```
+
+### Деплой на Vercel
+
+Приложение готово к деплою на [Vercel](https://vercel.com) — платформе от создателей Next.js.
+
+**Способ 1 — Vercel CLI:**
+
+```bash
+npm i -g vercel
+vercel
+```
+
+**Способ 2 — GitHub + Vercel (рекомендуется):**
+
+1. Запушьте репозиторий на GitHub.
+2. Перейдите на [vercel.com/new](https://vercel.com/new).
+3. Импортируйте репозиторий `lina-whm/fintech-dashboard`.
+4. Vercel автоматически определит Next.js и применит настройки.
+5. Добавьте переменную окружения `OLLAMA_API_URL` (если используете AI-функции на своём сервере).
+
+> ⚠️ AI-функции (чат, инсайты, распознавание чеков) требуют запущенного Ollama. На Vercel они будут возвращать заглушки/ошибки без отдельного AI-сервера. Основной функционал (учёт, аналитика, бюджеты) работает полностью автономно.
+
+### PWA (Progressive Web App)
+
+Приложение поддерживает установку на домашний экран:
+
+| Платформа | Инструкция |
+|-----------|------------|
+| **Android (Chrome)** | При первом посещении появится баннер «Установить» / «Add to Home Screen» |
+| **iOS (Safari)** | Нажмите кнопку «Поделиться» → «На экран «Домой»» |
+| **Desktop (Chrome/Edge)** | Нажмите иконку установки в адресной строке |
+
+**Возможности PWA:**
+- Работа в офлайн-режиме (кеширование статики через Service Worker)
+- Полноэкранный режим без браузерной панели
+- Быстрый запуск с домашнего экрана
 
 ---
 
