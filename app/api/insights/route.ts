@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://localhost:11434';
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'inclusionai/ling-2.6-1t:free';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,30 +37,41 @@ export async function POST(request: NextRequest) {
       - Всего расходов: ${totalExpenses} руб.
       - Всего доходов: ${totalIncome} руб.
       - Самая затратная категория: ${topCategory}
-      
+
       Примеры ответов:
       "Вы много тратите на такси. Попробуйте пользоваться общественным транспортом 2 раза в неделю, чтобы сэкономить до 3000 руб. в месяц."
       "Ваши расходы на еду выше обычного. Попробуйте планировать меню на неделю."
-      
+
       Ответь кратко, без лишних слов.
     `;
 
-    const response = await fetch(`${OLLAMA_URL}/api/generate`, {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'https://fintech-dashboard-six.vercel.app',
+        'X-Title': 'FinTech Dashboard',
+      },
       body: JSON.stringify({
-        model: 'qwen3.5:0.8b',
-        prompt: prompt,
+        model: OPENROUTER_MODEL,
+        messages: [
+          { role: 'system', content: 'Ты — финансовый ассистент. Отвечай на русском языке, кратко.' },
+          { role: 'user', content: prompt },
+        ],
         stream: false,
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Ollama returned ${response.status}`);
+      const errText = await response.text().catch(() => 'Unknown error');
+      throw new Error(`OpenRouter (${response.status}): ${errText}`);
     }
 
-    const data = (await response.json()) as { response: string };
-    const insight = data.response || 'Не удалось получить подсказку';
+    const data = (await response.json()) as {
+      choices: Array<{ message: { content: string } }>;
+    };
+    const insight = data.choices?.[0]?.message?.content || 'Не удалось получить подсказку';
     return NextResponse.json({ insight });
   } catch (error: unknown) {
     console.error('Insights API error:', error);

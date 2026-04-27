@@ -54,7 +54,10 @@ export function AddTransactionForm() {
             setValue("title", data.title);
             setValue("amount", data.amount);
             setValue("date", data.date);
-            setValue("category", data.category as any);
+            // Маппинг категорий из Vision (русские) в категории формы
+            const validCategories = ["Еда", "Транспорт", "Покупки", "Здоровье", "Развлечения", "Зарплата", "Другое"];
+            const category = validCategories.includes(data.category) ? data.category : "Другое";
+            setValue("category", category as "Еда" | "Транспорт" | "Покупки" | "Здоровье" | "Развлечения" | "Зарплата" | "Другое");
             setValue("type", "Расход");
           }} />
         </div>

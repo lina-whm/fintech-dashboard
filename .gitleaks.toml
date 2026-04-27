@@ -63,6 +63,7 @@ tags = ["secret", "openrouter"]
 [rules.allowlist]
 regexes = [
     '''inclusionai/ling-2\.6-1t:free''',
+    '''OPENROUTER_VISION_MODEL''',
 ]
 
 [[rules]]

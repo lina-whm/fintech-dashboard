@@ -84,7 +84,10 @@ export function AIChat() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input, context }),
+        body: JSON.stringify({
+          messages: [...messages.filter(m => m.role !== "system"), userMsg],
+          context,
+        }),
         signal: abortRef.current.signal,
       });
 
