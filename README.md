@@ -10,8 +10,11 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?logo=tailwindcss)
 ![OpenRouter](https://img.shields.io/badge/OpenRouter-AI-FF6B6B)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000?logo=vercel)
 
 ---
+
+> **🌐 Деплой:** [fintech-dashboard.vercel.app](https://fintech-dashboard.vercel.app)
 
 ## Оглавление
 
@@ -307,6 +310,12 @@ npm run test:e2e
 ## Деплой
 
 ### Vercel (рекомендуется)
+
+Проект задеплоен на **Vercel**: [fintech-dashboard.vercel.app](https://fintech-dashboard.vercel.app)
+
+При пуше в ветку `main` деплой происходит автоматически через GitHub Actions.
+
+**Настройка вручную:**
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 

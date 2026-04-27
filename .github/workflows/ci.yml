@@ -76,3 +76,18 @@ jobs:
           DATABASE_URL: "postgresql://fintech:FinTech2024@localhost:5432/fintech_db?schema=public"
           NEXTAUTH_SECRET: "test-secret-for-ci-min-32-chars-long!!"
           NEXTAUTH_URL: "http://localhost:3000"
+
+  deploy:
+    needs: [secrets-scan, lint-and-test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod"
