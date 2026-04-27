@@ -1,38 +1,113 @@
-import seed from "@/data/transactions.json";
+import { prisma } from "@/lib/prisma";
 import type { NewTransactionInput, Transaction } from "@/entities/transaction/model/types";
+import seed from "@/data/transactions.json";
+import type { TransactionType } from "@prisma/client";
 
-let transactions: Transaction[] = JSON.parse(JSON.stringify(seed));
-
-export function listTransactions(): Transaction[] {
-  return [...transactions];
+function mapPrismaTransaction(t: {
+  id: string;
+  title: string;
+  amount: number;
+  category: string;
+  type: TransactionType;
+  date: string;
+}): Transaction {
+  return {
+    id: t.id,
+    title: t.title,
+    amount: t.amount,
+    category: t.category as Transaction["category"],
+    type: t.type === "Доход" ? "Доход" : "Расход",
+    date: t.date,
+  };
 }
 
-export function getTransaction(id: string): Transaction | undefined {
-  return transactions.find(t => t.id === id);
+export async function listTransactions(userId?: string): Promise<Transaction[]> {
+  const rows = await prisma.transaction.findMany({
+    where: userId ? { userId } : {},
+    orderBy: { date: "desc" },
+  });
+  return rows.map(mapPrismaTransaction);
 }
 
-export function createTransaction(input: NewTransactionInput): Transaction {
-  const created: Transaction = { id: crypto.randomUUID(), ...input };
-  transactions = [created, ...transactions];
-  return created;
+export async function getTransaction(id: string): Promise<Transaction | null> {
+  const row = await prisma.transaction.findUnique({ where: { id } });
+  return row ? mapPrismaTransaction(row) : null;
 }
 
-export function updateTransaction(id: string, input: Partial<NewTransactionInput>): Transaction | null {
-  const index = transactions.findIndex(t => t.id === id);
-  if (index === -1) return null;
-  const updated = { ...transactions[index], ...input };
-  transactions = [updated, ...transactions.filter(t => t.id !== id)];
-  return updated;
+export async function createTransaction(
+  input: NewTransactionInput,
+  userId?: string
+): Promise<Transaction> {
+  const row = await prisma.transaction.create({
+    data: {
+      title: input.title,
+      amount: input.amount,
+      category: input.category,
+      type: input.type,
+      date: input.date,
+      userId: userId ?? null,
+    },
+  });
+  return mapPrismaTransaction(row);
 }
 
-export function deleteTransaction(id: string): boolean {
-  const exists = transactions.some(t => t.id === id);
-  if (!exists) return false;
-  transactions = transactions.filter(t => t.id !== id);
-  return true;
+export async function updateTransaction(
+  id: string,
+  input: Partial<NewTransactionInput>
+): Promise<Transaction | null> {
+  try {
+    const row = await prisma.transaction.update({
+      where: { id },
+      data: {
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.amount !== undefined && { amount: input.amount }),
+        ...(input.category !== undefined && { category: input.category }),
+        ...(input.type !== undefined && { type: input.type }),
+        ...(input.date !== undefined && { date: input.date }),
+      },
+    });
+    return mapPrismaTransaction(row);
+  } catch {
+    return null;
+  }
 }
 
-export function resetTransactions(): Transaction[] {
-  transactions = JSON.parse(JSON.stringify(seed));
-  return [...transactions];
+export async function deleteTransaction(id: string): Promise<boolean> {
+  try {
+    await prisma.transaction.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function resetTransactions(userId?: string): Promise<Transaction[]> {
+  if (userId) {
+    await prisma.transaction.deleteMany({ where: { userId } });
+    const rows = await prisma.transaction.createManyAndReturn({
+      data: seed.map((t: (typeof seed)[number]) => ({
+        title: t.title,
+        amount: t.amount,
+        category: t.category,
+        type: t.type as "Доход" | "Расход",
+        date: t.date,
+        userId,
+      })),
+    });
+    return rows.map(mapPrismaTransaction);
+  }
+
+  // Если userId не указан — полный сброс всех транзакций (для админа)
+  await prisma.transaction.deleteMany();
+  const rows = await prisma.transaction.createManyAndReturn({
+    data: seed.map((t: (typeof seed)[number]) => ({
+      title: t.title,
+      amount: t.amount,
+      category: t.category,
+      type: t.type as "Доход" | "Расход",
+      date: t.date,
+      userId: null,
+    })),
+  });
+  return rows.map(mapPrismaTransaction);
 }

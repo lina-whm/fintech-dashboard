@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
-import { resetTransactions } from "@/server/transactions/transaction-store";
+import { getTransactionService } from "@/lib/services/service-factory";
 
 export async function POST() {
-  resetTransactions();
-  return NextResponse.json({ success: true });
+  try {
+    const service = getTransactionService();
+    const transactions = await service.reset();
+    return NextResponse.json(transactions);
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Reset failed" },
+      { status: 500 }
+    );
+  }
 }

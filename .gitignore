@@ -26,6 +26,13 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.example
+
+# Docker secrets
+docker-compose.override.yml
 
 # vercel
 .vercel
@@ -44,3 +51,5 @@ ollama_models/
 # Qwen Code AI config
 .qwen/
 .vercel
+
+/lib/generated/prisma
