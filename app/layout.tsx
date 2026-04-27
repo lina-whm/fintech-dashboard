@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Providers } from "./providers";
 import { PWARegister } from "@/components/pwa-register";
+import { FloatingAIChatWrapper } from "@/components/floating-ai-chat-wrapper";
 import { Geist } from "next/font/google";
 import { cn } from "@/shared/lib/cn";
 
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-background text-foreground antialiased">
         <Providers>{children}</Providers>
+        <FloatingAIChatWrapper />
         <PWARegister />
       </body>
     </html>
