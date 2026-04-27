@@ -52,4 +52,7 @@ ollama_models/
 .qwen/
 .vercel
 
+# Dev server logs
+.dev-server.log
+
 /lib/generated/prisma
