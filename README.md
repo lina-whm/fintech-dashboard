@@ -56,8 +56,8 @@ npm run dev
 ## Переменные окружения (.env.local)
 
 ```
-DATABASE_URL="postgresql://fintech:FinTech2024@localhost:5432/fintech_db?schema=public"
-NEXTAUTH_SECRET="super-secret-key-change-in-production-min-32-chars"
+DATABASE_URL="postgresql://FinTech2024@localhost:5432/fintech_db?schema=public"
+NEXTAUTH_SECRET="your-secret-key-min-32-chars"
 NEXTAUTH_URL="http://localhost:3000"
 OPENROUTER_API_KEY="sk-or-v1-..."
 OPENROUTER_MODEL="inclusionai/ling-2.6-1t:free"
