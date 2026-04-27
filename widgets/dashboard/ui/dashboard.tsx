@@ -16,7 +16,8 @@ import { TransactionTable } from "@/widgets/transaction-table/ui/transaction-tab
 import { TransactionTableSkeleton } from "@/widgets/transaction-table/ui/transaction-table-skeleton";
 import { AddTransactionForm } from "@/features/transaction-add/ui/add-transaction-form";
 import { ThemeToggle } from "@/widgets/theme-toggle/ui/theme-toggle";
-import { BudgetCard } from "@/widgets/budget-card/ui/budget-card";
+import { AuthButton } from "@/components/auth-button";
+const BudgetCard = dynamic(() => import("@/widgets/budget-card/ui/budget-card").then(m => ({ default: m.BudgetCard })), { ssr: false });
 import { TopCategories } from "@/widgets/top-categories/ui/top-categories";
 import { BalanceTrend } from "@/widgets/balance-trend/ui/balance-trend";
 import { Button } from "@/shared/ui/button";
@@ -112,6 +113,7 @@ export function Dashboard() {
                 <Download className="mr-1.5 h-4 w-4" />
                 <span className="hidden sm:inline">CSV</span>
               </Button>
+              <AuthButton />
               <ThemeToggle />
             </div>
           </div>

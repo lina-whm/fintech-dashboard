@@ -31,7 +31,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ru" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <head>
         <meta name="theme-color" content="#0F172A" />
-        <link rel="icon" type="image/svg+xml" href="/brand-mark.svg" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="alternate icon" href="/brand-mark.svg" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />
       </head>
       <body className="bg-background text-foreground antialiased">
