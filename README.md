@@ -14,7 +14,7 @@
 
 ---
 
-> **🌐 Деплой:** [fintech-dashboard.vercel.app](https://fintech-dashboard.vercel.app)
+> **🌐 Деплой:** [fintech-dashboard-six.vercel.app](https://fintech-dashboard-six.vercel.app)
 
 ## Оглавление
 
@@ -311,7 +311,7 @@ npm run test:e2e
 
 ### Vercel (рекомендуется)
 
-Проект задеплоен на **Vercel**: [fintech-dashboard.vercel.app](https://fintech-dashboard.vercel.app)
+Проект задеплоен на **Vercel**: [fintech-dashboard-six.vercel.app](https://fintech-dashboard-six.vercel.app)
 
 При пуше в ветку `main` деплой происходит автоматически через GitHub Actions.
 
