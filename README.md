@@ -14,7 +14,7 @@
 
 ---
 
-> **🌐 Деплой:** [fintech-dashboard-six.vercel.app](https://fintech-dashboard-six.vercel.app)
+> **🌐 Деплой:** [fintech-dashboard-six.vercel.app](https://fintech-dashboard-six.vercel.app/)
 
 ## Оглавление
 
@@ -66,29 +66,29 @@ FinTech Dashboard — единое окно для учёта финансов �
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                    Frontend (Next.js)                │
+│              Frontend (Next.js)                     │
 │  ┌──────────┐  ┌──────────┐  ┌───────────────────┐  │
-│  │ Dashboard │  │ AI Chat  │  │ Receipt Uploader  │  │
-│  │ (виджеты) │  │ (floating)│  │ (Vision)          │  │
+│  │ Dashboard│  │ AI Chat  │  │ Receipt Uploader  │  │
+│  │ (виджеты)│  │(floating)│  │ (Vision)          │  │
 │  └────┬─────┘  └────┬─────┘  └────────┬──────────┘  │
-│       │              │                 │              │
-│  ┌────▼──────────────▼─────────────────▼──────────┐  │
-│  │           API Routes (Next.js)                  │  │
-│  │  /api/chat  /api/vision  /api/insights          │  │
-│  │  /api/transactions  /api/budgets  /api/auth     │  │
-│  └────────────────────┬───────────────────────────┘  │
-└───────────────────────┼──────────────────────────────┘
+│       │             │                 │             │
+│  ┌────▼─────────────▼─────────────────▼──────────┐  │
+│  │           API Routes (Next.js)                │  │
+│  │  /api/chat  /api/vision  /api/insights        │  │
+│  │  /api/transactions  /api/budgets  /api/auth   │  │
+│  └────────────────────┬──────────────────────────┘  │
+└───────────────────────┼─────────────────────────────┘
                         │
 ┌───────────────────────▼──────────────────────────────┐
-│              OpenRouter API (облако)                  │
+│              OpenRouter API (облако)                 │
 │  ┌──────────────┐  ┌──────────────┐                  │
-│  │ Chat/Insights │  │ Vision (VL)  │                  │
-│  │ ling-2.6-1t   │  │ qwen-vl-plus │                  │
+│  │ Chat/Insights│  │ Vision (VL)  │                  │
+│  │ ling-2.6-1t  │  │ qwen-vl-plus │                  │
 │  └──────────────┘  └──────────────┘                  │
 └──────────────────────────────────────────────────────┘
                         │
 ┌───────────────────────▼──────────────────────────────┐
-│              PostgreSQL 16 (Windows)                  │
+│              PostgreSQL 16 (Windows)                 │
 │  ┌────────────────────────────────────────────────┐  │
 │  │  Prisma ORM  │  fintech_db  │  fintech user    │  │
 │  └────────────────────────────────────────────────┘  │
