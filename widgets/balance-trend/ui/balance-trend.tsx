@@ -27,6 +27,11 @@ export function BalanceTrend({ transactions }: BalanceTrendProps) {
     return acc;
   }, [] as typeof data);
 
+  // Добавляем стартовую точку с нулевым балансом перед первой датой
+  if (unique.length > 0) {
+    unique.unshift({ date: unique[0].date, balance: 0 });
+  }
+
   // Цвета для тёмной темы
   const gridColor = isDark ? "#334155" : "#e2e8f0";
   const textColor = isDark ? "#94a3b8" : "#64748b";
