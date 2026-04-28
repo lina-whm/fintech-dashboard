@@ -116,4 +116,7 @@ paths = [
     '''docker-compose\.yml''',
     # debug route — читает process.env, но не содержит реальных секретов
     '''app/api/debug/route\.ts''',
+    # chat/insights routes — используют OPENROUTER_MODEL как название переменной, а не секрет
+    '''app/api/chat/route\.ts''',
+    '''app/api/insights/route\.ts''',
 ]

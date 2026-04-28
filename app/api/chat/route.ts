@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'inclusionai/ling-2.6-1t:free';
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
 
 export async function POST(request: NextRequest) {
   try {
