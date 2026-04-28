@@ -114,4 +114,6 @@ paths = [
     '''\.env\.local''',
     # docker-compose.yml — локальная разработка, пароль для dev-среды
     '''docker-compose\.yml''',
+    # debug route — читает process.env, но не содержит реальных секретов
+    '''app/api/debug/route\.ts''',
 ]
