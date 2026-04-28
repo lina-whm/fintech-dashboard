@@ -6,7 +6,7 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)
 ![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)
+![Turso](https://img.shields.io/badge/Turso-libSQL-4FC08D?logo=sqlite)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?logo=tailwindcss)
 ![OpenRouter](https://img.shields.io/badge/OpenRouter-AI-FF6B6B)
 ![License](https://img.shields.io/badge/License-MIT-green)
@@ -88,9 +88,10 @@ FinTech Dashboard — единое окно для учёта финансов �
 └──────────────────────────────────────────────────────┘
                         │
 ┌───────────────────────▼──────────────────────────────┐
-│              PostgreSQL 16 (Windows)                 │
+│              Turso (libSQL, облачная SQLite)          │
 │  ┌────────────────────────────────────────────────┐  │
-│  │  Prisma ORM  │  fintech_db  │  fintech user    │  │
+│  │  Prisma ORM + @prisma/adapter-libsql           │  │
+│  │  fintech-db-lina-whm (Frankfurt)               │  │
 │  └────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────┘
 ```
@@ -124,7 +125,7 @@ FinTech Dashboard — единое окно для учёта финансов �
 ### Backend
 - **Next.js API Routes** — серверные эндпоинты
 - **Prisma 6** — ORM
-- **PostgreSQL 16** — база данных
+- **Turso (libSQL)** — облачная SQLite (бесплатно, 9 ГБ)
 - **NextAuth v5** — аутентификация (GitHub OAuth + Credentials)
 
 ### AI
@@ -147,9 +148,11 @@ FinTech Dashboard — единое окно для учёта финансов �
 ## Требования к окружению
 
 - **Node.js** 18+ (рекомендуется 20+)
-- **PostgreSQL** 16 (локально или через Docker)
 - **npm** 9+ (или yarn/pnpm)
 - **Git** — для клонирования репозитория
+- **Turso CLI** (опционально) — для управления облачной БД
+
+> База данных — **Turso (libSQL)**, облачная SQLite. Регистрация через GitHub, бесплатно до 9 ГБ. Не требует локального PostgreSQL.
 
 ---
 
@@ -168,31 +171,7 @@ cd fintech-dashboard
 npm install
 ```
 
-### 3. Настройка PostgreSQL
-
-**Вариант A: Локальный PostgreSQL (рекомендуется)**
-
-Установите PostgreSQL 16, создайте пользователя и базу данных:
-
-```bash
-psql -U postgres
-CREATE USER fintech WITH PASSWORD '[ВАШ_ПАРОЛЬ]';
-CREATE DATABASE fintech_db OWNER fintech;
-\q
-```
-
-**Вариант B: Docker**
-
-```bash
-docker run -d --name fintech-pg \
-  -e POSTGRES_USER=fintech \
-  -e POSTGRES_PASSWORD=[ВАШ_ПАРОЛЬ] \
-  -e POSTGRES_DB=fintech_db \
-  -p 5432:5432 \
-  postgres:16-alpine
-```
-
-### 4. Переменные окружения
+### 3. Переменные окружения
 
 Скопируйте `.env.example` в `.env.local` и заполните:
 
@@ -202,12 +181,29 @@ cp .env.example .env.local
 
 Подробнее — в разделе [Переменные окружения](#переменные-окружения).
 
-### 5. Миграция и seed
+### 4. Генерация Prisma Client
 
 ```bash
-npx prisma migrate dev --name init
-npx tsx scripts/seed.ts
+npx prisma generate
 ```
+
+### 5. Настройка базы данных (Turso)
+
+1. Зарегистрируйтесь на [turso.tech](https://turso.tech) через GitHub
+2. Создайте базу данных:
+   ```bash
+   turso db create fintech-db
+   ```
+3. Получите URL и токен:
+   ```bash
+   turso db show fintech-db --url
+   turso db tokens create fintech-db
+   ```
+4. Добавьте в `.env.local`:
+   ```env
+   DATABASE_URL="libsql://[ваша-база].turso.io"
+   TURSO_AUTH_TOKEN="[ваш-токен]"
+   ```
 
 ### 6. Запуск
 
@@ -224,8 +220,9 @@ npm run dev
 Создайте файл `.env.local` в корне проекта:
 
 ```env
-# === База данных ===
-DATABASE_URL="postgresql://fintech:[ВАШ_ПАРОЛЬ]@127.0.0.1:5432/fintech_db?schema=public"
+# === База данных (Turso / libSQL) ===
+DATABASE_URL="libsql://[ваша-база].turso.io"
+TURSO_AUTH_TOKEN="[ваш-токен]"
 
 # === NextAuth ===
 NEXTAUTH_SECRET="[ВАШ_SECRET_МИНИМУМ_32_СИМВОЛА]"
@@ -313,7 +310,7 @@ npm run test:e2e
 
 Проект задеплоен на **Vercel**: [fintech-dashboard-six.vercel.app](https://fintech-dashboard-six.vercel.app)
 
-При пуше в ветку `main` деплой происходит автоматически через GitHub Actions.
+При пуше в ветку `main` деплой происходит автоматически через Vercel Git Integration.
 
 **Настройка вручную:**
 
@@ -321,8 +318,10 @@ npm run test:e2e
 
 1. Подключите GitHub-репозиторий
 2. Добавьте переменные окружения (см. [Переменные окружения](#переменные-окружения))
-3. Укажите PostgreSQL (например, через [Neon](https://neon.tech) или [Supabase](https://supabase.com))
+3. Укажите `DATABASE_URL` и `TURSO_AUTH_TOKEN` от Turso
 4. Деплой
+
+> **Важно:** На Vercel не требуется `prisma db push` или `prisma migrate` — Prisma Client генерируется на этапе сборки, а Turso работает через `@prisma/adapter-libsql`.
 
 ### Docker
 
