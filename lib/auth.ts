@@ -1,14 +1,10 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import type { Adapter } from "next-auth/adapters";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET ?? "super-secret-key-change-in-production-min-32-chars",
-  adapter: PrismaAdapter(prisma) as Adapter,
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GitHub({
       clientId: process.env.GITHUB_CLIENT_ID!,
@@ -44,9 +40,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    session({ session, token, user }) {
+    async jwt({ token, user }) {
+      if (user?.id) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = user?.id ?? token.sub ?? "";
+        session.user.id = (token.id as string) ?? token.sub ?? "";
       }
       return session;
     },
