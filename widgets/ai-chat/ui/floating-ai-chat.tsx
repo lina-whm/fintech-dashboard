@@ -186,7 +186,7 @@ export function FloatingAIChat() {
       {/* Кнопка-триггер */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95 ${
+        className={`fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 shadow-[0_0_20px_rgba(139,92,246,0.5)] ring-2 ring-violet-400/50 transition-all hover:scale-110 hover:shadow-[0_0_30px_rgba(139,92,246,0.7)] active:scale-95 animate-pulse-subtle ${
           isOpen ? "hidden" : "flex"
         }`}
         aria-label="Открыть AI-чат"

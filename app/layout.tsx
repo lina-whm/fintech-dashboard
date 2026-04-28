@@ -37,8 +37,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />
       </head>
       <body className="bg-background text-foreground antialiased">
-        <Providers>{children}</Providers>
-        <FloatingAIChatWrapper />
+        <Providers>
+          {children}
+          <FloatingAIChatWrapper />
+        </Providers>
         <PWARegister />
       </body>
     </html>

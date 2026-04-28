@@ -97,33 +97,59 @@ export function Dashboard() {
 
   const exportToPDF = async () => {
     const { default: jsPDF } = await import("jspdf");
-    await import("jspdf-autotable");
+    const { default: autoTable } = await import("jspdf-autotable");
 
     const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
 
+    // Транслитерация для кириллицы (jsPDF не поддерживает русские шрифты без доп. загрузки)
+    const tr = (s: string) =>
+      s
+        .replace(/[а-яё]/gi, (c) =>
+          "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+            .split("")
+            .reduce(
+              (acc, r, i) =>
+                acc.replace(
+                  new RegExp(r, "gi"),
+                  "abvgdeejziyklmnoprstufhccssyyeya"[i] +
+                    (c === c.toUpperCase() && r !== "ъ" && r !== "ь" ? "" : ""),
+                ),
+              c,
+            ),
+        )
+        .replace(/[А-ЯЁ]/g, (c) =>
+          "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+            .split("")
+            .reduce(
+              (acc, r, i) =>
+                acc.replace(r, "ABVGDEEJZIYKLMNOPRSTUFHCCSSYYEYA"[i]),
+              c,
+            ),
+        );
+
     // Заголовок
     doc.setFontSize(16);
-    doc.text("FinTech Dashboard — Отчёт по транзакциям", 14, 15);
+    doc.text(tr("FinTech Dashboard — Отчёт по транзакциям"), 14, 15);
     doc.setFontSize(10);
-    doc.text(`Дата: ${new Date().toLocaleDateString("ru-RU")}`, 14, 22);
+    doc.text(tr(`Дата: ${new Date().toLocaleDateString("ru-RU")}`), 14, 22);
 
     // Сводка
     doc.setFontSize(11);
-    doc.text(`Доходы: ${summary.income.toLocaleString("ru-RU")} ₽`, 14, 30);
-    doc.text(`Расходы: ${summary.expenses.toLocaleString("ru-RU")} ₽`, 80, 30);
-    doc.text(`Баланс: ${summary.balance.toLocaleString("ru-RU")} ₽`, 146, 30);
+    doc.text(tr(`Доходы: ${summary.income.toLocaleString("ru-RU")} rub`), 14, 30);
+    doc.text(tr(`Расходы: ${summary.expenses.toLocaleString("ru-RU")} rub`), 80, 30);
+    doc.text(tr(`Баланс: ${summary.balance.toLocaleString("ru-RU")} rub`), 146, 30);
 
     // Таблица
-    const headers = [["Название", "Сумма (₽)", "Категория", "Тип", "Дата"]];
+    const headers = [[tr("Название"), tr("Сумма (rub)"), tr("Категория"), tr("Тип"), tr("Дата")]];
     const rows = filtered.map((t) => [
-      t.title,
+      tr(t.title),
       Number(t.amount).toFixed(2),
-      t.category,
-      t.type,
+      tr(t.category),
+      tr(t.type),
       t.date,
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       head: headers,
       body: rows,
       startY: 35,
