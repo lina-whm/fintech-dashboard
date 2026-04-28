@@ -9,7 +9,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {
   title: "FinTech Dashboard",
-  description: "Управление личными финансами с AI-аналитикой и распознаванием чеков",
+  description: "Управление личными финансами с AI-аналитикой",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

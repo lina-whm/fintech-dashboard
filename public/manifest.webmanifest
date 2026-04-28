@@ -1,7 +1,7 @@
 {
   "name": "FinTech Dashboard",
   "short_name": "FinTech",
-  "description": "Управление личными финансами с AI-аналитикой и распознаванием чеков",
+  "description": "Управление личными финансами с AI-аналитикой",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0F172A",

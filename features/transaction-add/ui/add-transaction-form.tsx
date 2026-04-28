@@ -10,8 +10,6 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import { ReceiptUploader } from "./receipt-uploader";
-
 export function AddTransactionForm() {
   const mutation = useAddTransactionMutation();
   const {
@@ -19,7 +17,6 @@ export function AddTransactionForm() {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
@@ -49,18 +46,6 @@ export function AddTransactionForm() {
         <CardTitle className="text-sm">Добавить транзакцию</CardTitle>
       </CardHeader>
       <CardContent className="px-3 pt-1">
-        <div className="mb-4">
-          <ReceiptUploader onDataFilled={(data) => {
-            setValue("title", data.title);
-            setValue("amount", data.amount);
-            setValue("date", data.date);
-            // Маппинг категорий из Vision (русские) в категории формы
-            const validCategories = ["Еда", "Транспорт", "Покупки", "Здоровье", "Развлечения", "Зарплата", "Другое"];
-            const category = validCategories.includes(data.category) ? data.category : "Другое";
-            setValue("category", category as "Еда" | "Транспорт" | "Покупки" | "Здоровье" | "Развлечения" | "Зарплата" | "Другое");
-            setValue("type", "Расход");
-          }} />
-        </div>
         <form onSubmit={onSubmit} className="grid gap-4" data-testid="transaction-form">
           <div className="grid gap-2">
             <label htmlFor="title" className="dark:text-gray-200">Название</label>
