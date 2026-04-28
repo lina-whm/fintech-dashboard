@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import type { Adapter } from "next-auth/adapters";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET ?? "super-secret-key-change-in-production-min-32-chars",
   adapter: PrismaAdapter(prisma) as Adapter,
   providers: [
     GitHub({
