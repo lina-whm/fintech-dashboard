@@ -12,11 +12,16 @@ import { formatDate } from "@/shared/lib/date";
 import { cn } from "@/shared/lib/cn";
 import type { Transaction } from "@/entities/transaction/model/types";
 import { useDeleteTransactionMutation } from "@/features/transaction-delete/model/use-delete-transaction";
+import { useDeleteAllTransactionsMutation, transactionKeys } from "@/entities/transaction/api/transaction.queries";
 import { EditTransactionDialog } from "@/features/transaction-edit/ui/edit-transaction-dialog";
 import ReactPaginate from "react-paginate";
+import { EmptyState } from "@/shared/ui/empty-state";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface TransactionTableProps {
   transactions: Transaction[];
+  onAddTransaction?: () => void;
 }
 
 const ITEMS_PER_PAGE = 5;
@@ -31,11 +36,28 @@ const categoryIcons: Record<string, typeof Utensils> = {
   "Другое": MoreHorizontal,
 };
 
-export function TransactionTable({ transactions }: TransactionTableProps) {
+export function TransactionTable({ transactions, onAddTransaction }: TransactionTableProps) {
+  const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(0);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null);
+  const [deletingAll, setDeletingAll] = useState(false);
   const { mutate: deleteTransaction } = useDeleteTransactionMutation();
+  const { mutate: deleteAll } = useDeleteAllTransactionsMutation();
+
+  const handleDeleteAll = () => {
+    deleteAll(undefined, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: transactionKeys.all });
+        toast.success("Все транзакции удалены");
+        setDeletingAll(false);
+      },
+      onError: (error) => {
+        toast.error(error.message || "Ошибка при удалении транзакций");
+        setDeletingAll(false);
+      },
+    });
+  };
 
   const pageCount = Math.ceil(transactions.length / ITEMS_PER_PAGE);
   const offset = currentPage * ITEMS_PER_PAGE;
@@ -48,8 +70,14 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
   return (
     <>
       <Card className="shadow-soft border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50 !gap-0 !py-0">
-        <CardHeader className="pb-1 px-3">
+        <CardHeader className="pb-1 px-3 flex flex-row items-center justify-between">
           <CardTitle className="text-sm dark:text-gray-200">Последние транзакции</CardTitle>
+          {transactions.length > 0 && (
+            <Button variant="ghost" size="sm" onClick={() => setDeletingAll(true)} className="text-destructive hover:text-destructive dark:text-red-400 dark:hover:text-red-300">
+              <Trash2 className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline text-xs">Очистить</span>
+            </Button>
+          )}
         </CardHeader>
         <CardContent className="px-3 pt-1">
           {/* Десктоп: таблица */}
@@ -66,7 +94,13 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentTransactions.length === 0 ? (
+              {transactions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="p-0">
+                    <EmptyState onAddTransaction={onAddTransaction} />
+                  </TableCell>
+                </TableRow>
+              ) : currentTransactions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center dark:text-gray-400">Нет данных</TableCell>
                 </TableRow>
@@ -97,10 +131,10 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                     </TableCell>
                     <TableCell className="text-right dark:text-gray-200">
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => setEditingTransaction(t)}>
+                        <Button variant="ghost" size="icon" onClick={() => setEditingTransaction(t)} aria-label="Редактировать транзакцию">
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => setDeletingTransaction(t)}>
+                        <Button variant="ghost" size="icon" onClick={() => setDeletingTransaction(t)} aria-label="Удалить транзакцию">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -114,7 +148,9 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
 
           {/* Мобильные: карточки */}
           <div className="sm:hidden space-y-2">
-            {currentTransactions.length === 0 ? (
+            {transactions.length === 0 ? (
+              <EmptyState onAddTransaction={onAddTransaction} />
+            ) : currentTransactions.length === 0 ? (
               <div className="text-center text-sm text-muted-foreground dark:text-gray-400 py-4">Нет данных</div>
             ) : (
               currentTransactions.map((t) => (
@@ -142,10 +178,10 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                         {t.type === "Расход" ? "-" : "+"}{formatCurrency(t.amount)}
                       </span>
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingTransaction(t)}>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingTransaction(t)} aria-label="Редактировать транзакцию">
                           <Edit className="h-3.5 w-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setDeletingTransaction(t)}>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setDeletingTransaction(t)} aria-label="Удалить транзакцию">
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -195,6 +231,20 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                 setDeletingTransaction(null);
               }
             }}>Удалить</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={deletingAll} onOpenChange={setDeletingAll}>
+        <DialogContent className="bg-white dark:bg-gray-800">
+          <DialogHeader>
+            <DialogTitle>Удалить все транзакции?</DialogTitle>
+            <DialogDescription>
+              Вы уверены, что хотите удалить все {transactions.length} транзакций? Это действие нельзя отменить.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingAll(false)}>Отмена</Button>
+            <Button variant="destructive" onClick={handleDeleteAll}>Удалить все</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

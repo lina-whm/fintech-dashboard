@@ -6,6 +6,7 @@ export interface TransactionRepository {
   create(input: NewTransactionInput): Promise<Transaction>;
   update(id: string, input: Partial<NewTransactionInput>): Promise<Transaction>;
   delete(id: string): Promise<void>;
+  deleteAll(): Promise<void>;
   reset(): Promise<Transaction[]>;
 }
 
@@ -21,6 +22,9 @@ export class HttpTransactionRepository implements TransactionRepository {
   }
   delete(id: string) {
     return http<void>(`/api/transactions/${id}`, { method: "DELETE" });
+  }
+  deleteAll() {
+    return http<void>("/api/transactions?action=deleteAll", { method: "POST" });
   }
   reset() {
     return http<Transaction[]>("/api/transactions/reset", { method: "POST" });

@@ -2,6 +2,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { PWARegister } from "@/components/pwa-register";
 import { FloatingAIChatWrapper } from "@/components/floating-ai-chat-wrapper";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { Geist } from "next/font/google";
 import { cn } from "@/shared/lib/cn";
 
@@ -37,10 +38,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />
       </head>
       <body className="bg-background text-foreground antialiased">
-        <Providers>
-          {children}
-          <FloatingAIChatWrapper />
-        </Providers>
+        <ErrorBoundary>
+          <Providers>
+            {children}
+            <FloatingAIChatWrapper />
+          </Providers>
+        </ErrorBoundary>
         <PWARegister />
       </body>
     </html>

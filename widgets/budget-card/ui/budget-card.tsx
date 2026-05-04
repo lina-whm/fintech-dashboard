@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import { toast } from "sonner";
 import { transactionCategories, type TransactionCategory } from "@/entities/transaction/model/types";
 import { useBudgetStore } from "@/features/budget/model/budget-store";
 import { formatCurrency } from "@/shared/lib/money";
@@ -14,9 +15,10 @@ interface BudgetCardProps {
 }
 
 export function BudgetCard({ expensesByCategory }: BudgetCardProps) {
-  const { setBudget, getBudget } = useBudgetStore();
+  const { budgets, setBudget } = useBudgetStore();
   const [selectedCategory, setSelectedCategory] = useState<TransactionCategory>("Еда");
   const [limit, setLimit] = useState("");
+  const [notifiedKey, setNotifiedKey] = useState<string>("");
 
   const handleSetBudget = () => {
     const numLimit = parseFloat(limit);
@@ -25,6 +27,33 @@ export function BudgetCard({ expensesByCategory }: BudgetCardProps) {
       setLimit("");
     }
   };
+
+  const exceededKey = useMemo(() => {
+    const exceeded = transactionCategories.filter((cat) => {
+      const budget = budgets[cat];
+      if (!budget || budget === 0) return false;
+      const spent = expensesByCategory[cat] || 0;
+      return (spent / budget) >= 1;
+    }).sort().join("|");
+    return exceeded || "";
+  }, [budgets, expensesByCategory]);
+
+  useEffect(() => {
+    if (exceededKey && exceededKey !== notifiedKey) {
+      const categories = exceededKey.split("|") as TransactionCategory[];
+      const msg = categories.map(cat => {
+        const budget = budgets[cat];
+        const spent = expensesByCategory[cat] || 0;
+        return `${cat}: ${formatCurrency(spent)} из ${formatCurrency(budget)}`;
+      }).join(", ");
+      setTimeout(() => {
+        toast.warning(`Бюджет превышен! ${msg}`, { duration: 5000 });
+      }, 500);
+      setNotifiedKey(exceededKey);
+    } else if (!exceededKey && notifiedKey) {
+      setNotifiedKey("");
+    }
+  }, [exceededKey, budgets, expensesByCategory, notifiedKey]);
 
   return (
     <Card className="shadow-soft border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50 !gap-0 !py-0">
@@ -61,18 +90,25 @@ export function BudgetCard({ expensesByCategory }: BudgetCardProps) {
         {/* Список бюджетов */}
         <div className="space-y-2">
           {transactionCategories.map((cat) => {
-            const budget = getBudget(cat);
-            if (budget === 0) return null;
+            const budget = budgets[cat];
+            if (!budget || budget === 0) return null;
             const spent = expensesByCategory[cat] || 0;
             const percent = Math.min(100, (spent / budget) * 100);
+            const isWarning = percent >= 80 && percent < 100;
+            const isDanger = percent >= 100;
             return (
               <div key={cat}>
                 <div className="flex justify-between text-sm dark:text-gray-200">
                   <span>{cat}</span>
-                  <span>{formatCurrency(spent)} / {formatCurrency(budget)}</span>
+                  <span className={isDanger ? "text-destructive font-medium" : isWarning ? "text-amber-600 dark:text-amber-400" : ""}>
+                    {formatCurrency(spent)} / {formatCurrency(budget)}
+                  </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-muted overflow-hidden dark:bg-gray-700">
-                  <div className="h-full bg-primary" style={{ width: `${percent}%` }} />
+                  <div 
+                    className={`h-full transition-colors ${isDanger ? "bg-destructive" : isWarning ? "bg-amber-500" : "bg-primary"}`} 
+                    style={{ width: `${percent}%` }} 
+                  />
                 </div>
               </div>
             );

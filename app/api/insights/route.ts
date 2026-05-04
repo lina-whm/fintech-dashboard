@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from "@sentry/nextjs";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const result = rateLimit(ip, 10, 60000);
+  
+  if (!result.success) {
+    return NextResponse.json({ error: 'Too many requests. Try again later.' }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const transactions = body.transactions as Array<{
@@ -74,7 +83,7 @@ export async function POST(request: NextRequest) {
     const insight = data.choices?.[0]?.message?.content || 'Не удалось получить подсказку';
     return NextResponse.json({ insight });
   } catch (error: unknown) {
-    console.error('Insights API error:', error);
+    Sentry.captureException(error);
     return NextResponse.json({ insight: 'Не удалось сгенерировать подсказку' });
   }
 }

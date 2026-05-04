@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getTransactionService } from "@/lib/services/service-factory";
+import { updateTransactionSchema } from "@/entities/transaction/model/types";
 
 export async function GET(
   _request: Request,
@@ -31,10 +32,17 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
+    const validatedBody = updateTransactionSchema.parse(body);
     const service = getTransactionService();
-    const updated = await service.update(id, body);
+    const updated = await service.update(id, validatedBody);
     return NextResponse.json(updated);
   } catch (error) {
+    if (error instanceof Error && error.name === "ZodError") {
+      return NextResponse.json(
+        { message: "Invalid data", errors: error },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { message: error instanceof Error ? error.message : "Update failed" },
       { status: 400 }

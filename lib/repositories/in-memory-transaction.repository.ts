@@ -46,6 +46,10 @@ export class InMemoryTransactionRepository implements TransactionRepository {
     this.transactions = this.transactions.filter((t) => t.id !== id);
   }
 
+  async deleteAll(): Promise<void> {
+    this.transactions = [];
+  }
+
   async reset(): Promise<Transaction[]> {
     this.transactions = structuredClone(this.seedData);
     return [...this.transactions];

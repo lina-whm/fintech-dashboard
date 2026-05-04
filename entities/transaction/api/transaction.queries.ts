@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { transactionRepository } from "./transaction.repository";
 import type { Transaction } from "../model/types";
 
@@ -12,5 +12,17 @@ export function useTransactionsQuery() {
     queryFn: () => transactionRepository.list(),
     staleTime: 60_000,
     refetchOnWindowFocus: false,
+  });
+}
+
+export function useResetTransactionsMutation() {
+  return useMutation({
+    mutationFn: () => transactionRepository.reset(),
+  });
+}
+
+export function useDeleteAllTransactionsMutation() {
+  return useMutation({
+    mutationFn: () => transactionRepository.deleteAll(),
   });
 }

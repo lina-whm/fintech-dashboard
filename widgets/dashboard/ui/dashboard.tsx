@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { useTransactionsQuery } from "@/entities/transaction/api/transaction.queries";
 import {
   applyTransactionFilters,
@@ -9,6 +10,12 @@ import {
   calculateSummary,
   sortTransactions,
 } from "@/entities/transaction/api/transaction.service";
+
+const fadeIn = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.3 }
+};
 import { useTransactionFiltersStore } from "@/features/transaction-filters/model/filter-store";
 import { BalanceCard } from "@/widgets/balance-card/ui/balance-card";
 import { FiltersBar } from "@/widgets/filters-bar/ui/filters-bar";
@@ -19,7 +26,6 @@ import { ThemeToggle } from "@/widgets/theme-toggle/ui/theme-toggle";
 import { AuthButton } from "@/components/auth-button";
 const BudgetCard = dynamic(() => import("@/widgets/budget-card/ui/budget-card").then(m => ({ default: m.BudgetCard })), { ssr: false });
 import { TopCategories } from "@/widgets/top-categories/ui/top-categories";
-import { BalanceTrend } from "@/widgets/balance-trend/ui/balance-trend";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Download, FileText } from "lucide-react";
@@ -27,9 +33,17 @@ import { AIInsight } from "@/widgets/ai-insight/ui/ai-insight";
 import { KpiCards } from "@/widgets/kpi-cards/ui/kpi-cards";
 import { CashFlowMonitor } from "@/features/cash-flow-monitor/ui/cash-flow-monitor";
 import { SavingsRate } from "@/features/savings-rate/ui/savings-rate";
-import { GoalTracker } from "@/features/goal-tracker/ui/goal-tracker";
-import { DebtSafetyNet } from "@/features/debt-safety/ui/debt-safety-net";
+import { GoalTrackerSkeleton } from "@/shared/ui/goal-tracker-skeleton";
+
+const BalanceTrend = dynamic(() => import("@/widgets/balance-trend/ui/balance-trend").then(m => ({ default: m.BalanceTrend })), { ssr: false });
+const GoalTracker = dynamic(() => import("@/features/goal-tracker/ui/goal-tracker").then(m => ({ default: m.GoalTracker })), { ssr: false });
+const DebtSafetyNet = dynamic(() => import("@/features/debt-safety/ui/debt-safety-net").then(m => ({ default: m.DebtSafetyNet })), { ssr: false });
 import { GroupedExpenses } from "@/widgets/grouped-expenses/ui/grouped-expenses";
+import { KpiCardsSkeleton } from "@/shared/ui/kpi-cards-skeleton";
+import { BalanceCardSkeleton } from "@/shared/ui/balance-card-skeleton";
+import { ExpenseChartSkeleton } from "@/shared/ui/expense-chart-skeleton";
+import { BalanceTrendSkeleton } from "@/shared/ui/balance-trend-skeleton";
+import { BudgetCardSkeleton } from "@/shared/ui/budget-card-skeleton";
 
 const ExpenseChart = dynamic(() => import("@/widgets/expense-chart/ui/expense-chart").then(m => m.ExpenseChart), {
   ssr: false,
@@ -190,60 +204,69 @@ export function Dashboard() {
         </header>
 
         {/* KPI */}
-        <div className="mb-6">
-          <KpiCards
-            transactions={filtered}
-            balance={summary.balance}
-            income={monthlyIncome}
-            expenses={monthlyExpenses}
-          />
-        </div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-6">
+          {isLoading ? <KpiCardsSkeleton /> : (
+            <KpiCards
+              transactions={filtered}
+              balance={summary.balance}
+              income={monthlyIncome}
+              expenses={monthlyExpenses}
+            />
+          )}
+        </motion.div>
 
-        <div className="grid gap-4 md:grid-cols-[1fr_0.8fr]">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="grid gap-4 md:grid-cols-[1fr_0.8fr]"
+        >
           {/* Левая колонка */}
           <div className="space-y-4 md:space-y-6">
             {/* 1-я строка: Монитор | Баланс */}
-            <div className="grid gap-4 md:grid-cols-2">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2 }} className="grid gap-4 md:grid-cols-2">
               <div className="w-full"><CashFlowMonitor /></div>
-              <div className="w-full"><BalanceCard summary={summary} /></div>
-            </div>
+              <div className="w-full">{isLoading ? <BalanceCardSkeleton /> : <BalanceCard summary={summary} />}</div>
+            </motion.div>
 
             {/* 2-я строка: Структура расходов + Динамика баланса (слева) | Расходы по категориям (справа) */}
-            <div className="grid gap-4 md:grid-cols-2">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.3 }} className="grid gap-4 md:grid-cols-2">
               <div className="flex flex-col gap-4">
                 <div className="w-full"><GroupedExpenses transactions={filtered} /></div>
-                <div className="w-full"><BalanceTrend transactions={filtered} /></div>
+                <div className="w-full">{isLoading ? <BalanceTrendSkeleton /> : <BalanceTrend transactions={filtered} />}</div>
               </div>
-              <div className="w-full"><ExpenseChart data={chartData} /></div>
-            </div>
+              <div className="w-full">{isLoading ? <ExpenseChartSkeleton /> : <ExpenseChart data={chartData} />}</div>
+            </motion.div>
 
             {/* 3-я строка: Процент сбережения */}
-            <div className="w-full"><SavingsRate income={monthlyIncome} expenses={monthlyExpenses} /></div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.4 }} className="w-full"><SavingsRate income={monthlyIncome} expenses={monthlyExpenses} /></motion.div>
 
             {/* Фильтры (полная ширина) */}
-            <div className="w-full"><FiltersBar /></div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.5 }} className="w-full"><FiltersBar /></motion.div>
             
-            {isLoading ? (
-              <TransactionTableSkeleton />
-            ) : error ? (
-              <Card className="border-destructive/20 bg-destructive/5">
-                <CardContent className="p-6 text-destructive">Ошибка загрузки</CardContent>
-              </Card>
-            ) : (
-              <div className="w-full"><TransactionTable transactions={sorted} /></div>
-            )}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.6 }}>
+              {isLoading ? (
+                <TransactionTableSkeleton />
+              ) : error ? (
+                <Card className="border-destructive/20 bg-destructive/5">
+                  <CardContent className="p-6 text-destructive">Ошибка загрузки</CardContent>
+                </Card>
+              ) : (
+                <div className="w-full"><TransactionTable transactions={sorted} onAddTransaction={() => document.getElementById("add-transaction-form")?.scrollIntoView({ behavior: "smooth" })} /></div>
+              )}
+            </motion.div>
           </div>
 
           {/* Правая колонка */}
           <div className="space-y-4 md:space-y-6">
-            <div className="w-full"><AddTransactionForm /></div>
-            <div className="w-full"><GoalTracker /></div>
-            <div className="w-full"><DebtSafetyNet monthlyExpenses={monthlyExpenses} /></div>
-            <div className="w-full"><BudgetCard expensesByCategory={expensesByCategory} /></div>
-            <div className="w-full"><TopCategories data={chartData} /></div>
-            <div className="w-full"><AIInsight /></div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.15 }} className="w-full"><AddTransactionForm /></motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.25 }} className="w-full">{isLoading ? <GoalTrackerSkeleton /> : <GoalTracker />}</motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.35 }} className="w-full"><DebtSafetyNet monthlyExpenses={monthlyExpenses} /></motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.45 }} className="w-full">{isLoading ? <BudgetCardSkeleton /> : <BudgetCard expensesByCategory={expensesByCategory} />}</motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.55 }} className="w-full"><TopCategories data={chartData} /></motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.65 }} className="w-full"><AIInsight /></motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </main>
   );

@@ -35,3 +35,6 @@ export const transactionSchema = z.object({
 
 export const newTransactionSchema = transactionSchema.omit({ id: true });
 export type NewTransactionInput = z.infer<typeof newTransactionSchema>;
+
+export const updateTransactionSchema = newTransactionSchema.partial();
+export type UpdateTransactionInput = z.infer<typeof updateTransactionSchema>;

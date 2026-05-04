@@ -41,6 +41,10 @@ export class TransactionService {
     return this.repository.delete(id);
   }
 
+  async deleteAll(): Promise<void> {
+    return this.repository.deleteAll();
+  }
+
   async reset(): Promise<Transaction[]> {
     return this.repository.reset();
   }

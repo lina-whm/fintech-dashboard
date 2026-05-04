@@ -17,6 +17,15 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const url = new URL(request.url);
+    const action = url.searchParams.get("action");
+
+    if (action === "deleteAll") {
+      const service = getTransactionService();
+      await service.deleteAll();
+      return NextResponse.json({ success: true });
+    }
+
     const body = await request.json();
     const input = newTransactionSchema.parse(body);
     const service = getTransactionService();
@@ -26,6 +35,22 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { message: error instanceof Error ? error.message : "Invalid data" },
       { status: 400 }
+    );
+  }
+}
+
+export async function DELETE() {
+  try {
+    console.log("DELETE /api/transactions called");
+    const service = getTransactionService();
+    await service.deleteAll();
+    console.log("DELETE /api/transactions success");
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("DELETE /api/transactions error:", error);
+    return NextResponse.json(
+      { message: error instanceof Error ? error.message : "Delete all failed" },
+      { status: 500 }
     );
   }
 }

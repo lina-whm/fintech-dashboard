@@ -41,7 +41,7 @@ export function AddTransactionForm() {
   });
 
   return (
-    <Card className="shadow-soft border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50 !gap-0 !py-0">
+    <Card id="add-transaction-form" className="shadow-soft border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50 !gap-0 !py-0">
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm">Добавить транзакцию</CardTitle>
       </CardHeader>

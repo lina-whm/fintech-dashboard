@@ -1,8 +1,23 @@
 import { NextRequest } from 'next/server';
+import * as Sentry from "@sentry/nextjs";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const result = rateLimit(ip, 10, 60000);
+  
+  if (!result.success) {
+    return new Response(JSON.stringify({ error: 'Too many requests. Try again later.' }), {
+      status: 429,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Retry-After': '60',
+      },
+    });
+  }
+
   try {
     const { messages, context } = await request.json();
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
@@ -93,7 +108,7 @@ export async function POST(request: NextRequest) {
             }
           }
         } catch (err) {
-          console.error('OpenRouter stream error:', err);
+          Sentry.captureException(err);
         } finally {
           reader.releaseLock();
           controller.close();
