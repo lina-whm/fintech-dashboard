@@ -5,7 +5,8 @@ import { Badge } from "@/shared/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { Button } from "@/shared/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/shared/ui/dialog";
+import { Edit, Trash2, Utensils, Car, ShoppingBag, Heart, Film, Briefcase, MoreHorizontal } from "lucide-react";
 import { formatCurrency } from "@/shared/lib/money";
 import { formatDate } from "@/shared/lib/date";
 import { cn } from "@/shared/lib/cn";
@@ -20,9 +21,20 @@ interface TransactionTableProps {
 
 const ITEMS_PER_PAGE = 5;
 
+const categoryIcons: Record<string, typeof Utensils> = {
+  "Еда": Utensils,
+  "Транспорт": Car,
+  "Покупки": ShoppingBag,
+  "Здоровье": Heart,
+  "Развлечения": Film,
+  "Зарплата": Briefcase,
+  "Другое": MoreHorizontal,
+};
+
 export function TransactionTable({ transactions }: TransactionTableProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null);
   const { mutate: deleteTransaction } = useDeleteTransactionMutation();
 
   const pageCount = Math.ceil(transactions.length / ITEMS_PER_PAGE);
@@ -62,7 +74,15 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                 currentTransactions.map((t) => (
                   <TableRow key={t.id} data-testid="transaction-row" className="dark:border-gray-700">
                     <TableCell className="font-medium dark:text-gray-200">{t.title}</TableCell>
-                    <TableCell><Badge variant="outline" className="dark:border-gray-600 dark:text-gray-200">{t.category}</Badge></TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const Icon = categoryIcons[t.category] || MoreHorizontal;
+                          return <Icon className="h-4 w-4 text-muted-foreground dark:text-gray-400" />;
+                        })()}
+                        <span className="dark:text-gray-200">{t.category}</span>
+                      </div>
+                    </TableCell>
                     <TableCell className="dark:text-gray-200">{formatDate(t.date)}</TableCell>
                     <TableCell>
                       <span className={cn(
@@ -80,7 +100,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                         <Button variant="ghost" size="icon" onClick={() => setEditingTransaction(t)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)}>
+                        <Button variant="ghost" size="icon" onClick={() => setDeletingTransaction(t)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -103,7 +123,11 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                     <div className="min-w-0 flex-1">
                       <div className="font-medium text-sm dark:text-gray-200 truncate">{t.title}</div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <Badge variant="outline" className="text-[10px] h-5 px-1.5 dark:border-gray-600 dark:text-gray-200">{t.category}</Badge>
+                        {(() => {
+                          const Icon = categoryIcons[t.category] || MoreHorizontal;
+                          return <Icon className="h-3.5 w-3.5 text-muted-foreground dark:text-gray-400" />;
+                        })()}
+                        <span className="text-[10px] dark:text-gray-200">{t.category}</span>
                         <span className={cn(
                           "rounded-full px-2 py-0.5 text-[10px] font-medium",
                           t.type === "Доход" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400" : "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400"
@@ -121,7 +145,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditingTransaction(t)}>
                           <Edit className="h-3.5 w-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteTransaction(t.id)}>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setDeletingTransaction(t)}>
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -155,6 +179,25 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
         onOpenChange={(open) => !open && setEditingTransaction(null)}
         transaction={editingTransaction}
       />
+      <Dialog open={!!deletingTransaction} onOpenChange={(open) => !open && setDeletingTransaction(null)}>
+        <DialogContent className="bg-white dark:bg-gray-800">
+          <DialogHeader>
+            <DialogTitle>Удалить транзакцию?</DialogTitle>
+            <DialogDescription>
+              Вы уверены, что хотите удалить "{deletingTransaction?.title}" на сумму {deletingTransaction && (deletingTransaction.type === "Расход" ? "-" : "+")}{deletingTransaction && formatCurrency(deletingTransaction.amount)}? Это действие нельзя отменить.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingTransaction(null)}>Отмена</Button>
+            <Button variant="destructive" onClick={() => {
+              if (deletingTransaction) {
+                deleteTransaction(deletingTransaction.id);
+                setDeletingTransaction(null);
+              }
+            }}>Удалить</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

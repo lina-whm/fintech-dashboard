@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { transactionRepository } from "@/entities/transaction/api/transaction.repository";
 import { transactionKeys } from "@/entities/transaction/api/transaction.queries";
 import type { NewTransactionInput, Transaction } from "@/entities/transaction/model/types";
@@ -24,6 +25,10 @@ export function useAddTransactionMutation() {
       if (context) {
         queryClient.setQueryData(transactionKeys.all, context.previousTransactions);
       }
+      toast.error("Ошибка при добавлении транзакции");
+    },
+    onSuccess: () => {
+      toast.success("Транзакция добавлена");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: transactionKeys.all });
