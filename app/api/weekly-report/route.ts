@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from "@sentry/nextjs";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
-import { prisma } from "@/lib/prisma";
+import { getTransactions } from "@/lib/turso";
 
 const MODEL_NAME = process.env.OPENROUTER_MODEL || 'inclusionai/ling-2.6-1t:free';
 
@@ -18,14 +18,7 @@ export async function GET(request: NextRequest) {
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const weekAgoStr = weekAgo.toISOString().split('T')[0];
 
-    const transactions = await prisma.transaction.findMany({
-      where: {
-        date: {
-          gte: weekAgoStr,
-        },
-      },
-      orderBy: { date: 'desc' },
-    });
+    const transactions = await getTransactions(weekAgoStr);
 
     const income = transactions
       .filter(t => t.type === 'Доход')
