@@ -61,6 +61,7 @@ jobs:
 
       - name: Unit tests
         run: npm run test
+        env:
           NEXTAUTH_SECRET: "test-secret-for-ci-min-32-chars-long!!"
           NEXTAUTH_URL: "http://localhost:3000"
 
