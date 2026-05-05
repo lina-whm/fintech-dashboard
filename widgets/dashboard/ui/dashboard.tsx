@@ -30,7 +30,6 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Download, FileText } from "lucide-react";
 import { AIInsight } from "@/widgets/ai-insight/ui/ai-insight";
-import { WeeklyReportWidget } from "@/features/weekly-report/ui/weekly-report-widget";
 import { KpiCards } from "@/widgets/kpi-cards/ui/kpi-cards";
 import { CashFlowMonitor } from "@/features/cash-flow-monitor/ui/cash-flow-monitor";
 import { SavingsRate } from "@/features/savings-rate/ui/savings-rate";
@@ -241,7 +240,6 @@ export function Dashboard() {
 
             {/* 3-я строка: Процент сбережения */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.4 }} className="w-full"><SavingsRate income={monthlyIncome} expenses={monthlyExpenses} /></motion.div>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.45 }} className="w-full"><WeeklyReportWidget /></motion.div>
 
             {/* Фильтры (полная ширина) */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.5 }} className="w-full"><FiltersBar /></motion.div>
