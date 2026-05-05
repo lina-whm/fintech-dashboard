@@ -22,21 +22,6 @@ jobs:
   lint-and-test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: fintech
-          POSTGRES_PASSWORD: FinTech2024
-          POSTGRES_DB: fintech_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v4
 
@@ -52,23 +37,20 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
         env:
-          DATABASE_URL: "postgresql://fintech:FinTech2024@localhost:5432/fintech_db?schema=public"
+          DATABASE_URL: "file:./dev.db"
 
       - name: Run Prisma migrations
-        run: npx prisma migrate deploy
+        run: npx prisma db push
         env:
-          DATABASE_URL: "postgresql://fintech:FinTech2024@localhost:5432/fintech_db?schema=public"
+          DATABASE_URL: "file:./dev.db"
 
       - name: Unit tests
         run: npm run test
-        env:
-          NEXTAUTH_SECRET: "test-secret-for-ci-min-32-chars-long!!"
-          NEXTAUTH_URL: "http://localhost:3000"
 
       - name: Build
         run: npm run build
         env:
-          DATABASE_URL: "postgresql://fintech:FinTech2024@localhost:5432/fintech_db?schema=public"
+          DATABASE_URL: "file:./dev.db"
           NEXTAUTH_SECRET: "test-secret-for-ci-min-32-chars-long!!"
           NEXTAUTH_URL: "http://localhost:3000"
 
