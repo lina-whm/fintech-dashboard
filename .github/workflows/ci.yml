@@ -63,4 +63,4 @@ jobs:
 
       - name: Deploy to Vercel
         run: |
-          npx vercel@latest --prod --token=${{ secrets.VERCEL_TOKEN }} --org=${{ secrets.VERCEL_ORG_ID }} --project=${{ secrets.VERCEL_PROJECT_ID }}
+          npx vercel@latest --prod --token=${{ secrets.VERCEL_TOKEN }}
